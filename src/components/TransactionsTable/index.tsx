@@ -1,8 +1,14 @@
 import { Container } from "./styles";
 import { useTransactions } from "../../hooks/useTransactions";
+import fechar from '../../assets/fechar.svg';
+
 
 export function TransactionsTable(){
-    const {transactions} = useTransactions();
+    const {transactions, removeTransaction} = useTransactions();
+
+    async function handleRemoveTransaction(id: number){
+        await removeTransaction(id);
+    }
 
     return (
         <Container>
@@ -13,6 +19,7 @@ export function TransactionsTable(){
                         <th>Valor</th>
                         <th>Categoria</th>
                         <th>Data</th>
+                        <th>Remover</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -30,6 +37,11 @@ export function TransactionsTable(){
                                 {new Intl.DateTimeFormat('pt-BR').format(
                                     new Date(transaction.createdAt)
                                 )}
+                            </td>
+                            <td>
+                                <button>
+                                    <img src={fechar} alt="Remover transação" onClick={() => handleRemoveTransaction(transaction.id)}/>
+                                </button>
                             </td>
                         </tr>
                     ))}

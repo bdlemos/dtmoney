@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { api } from "../services/api";
+import { rem } from "polished";
 
 
 interface Transaction {
@@ -16,6 +17,7 @@ type TransactionInput = Omit<Transaction, 'id' | 'createdAt'>;
 interface TransactionsContextData {
     transactions: Transaction[];
     createTransaction: (transaction: TransactionInput) => Promise<void>;
+    removeTransaction: (transaction: number) => Promise<void>;
 }
 
 interface TransactionsProviderProps {
@@ -41,8 +43,14 @@ export function TransactionsProvider({children}: TransactionsProviderProps) {
         setTransactions([...transactions, transaction]);
     }
 
+    async function removeTransaction(transactionId: number){
+        await api.delete(`/transactions/${transactionId}`);
+        const newTransactions = transactions.filter(transaction => transactionId !== transaction.id);
+        setTransactions(newTransactions);
+    }
+
     return (
-        <TransactionsContext.Provider value={{transactions, createTransaction}}>
+        <TransactionsContext.Provider value={{transactions, createTransaction, removeTransaction}}>
             {children}
         </TransactionsContext.Provider>
     );
